@@ -36,7 +36,7 @@
             position: fixed;
             width: 100%;
             top: 0;
-            z-index: 1000;
+            z-index: 10001;
             height: 60px;
             backdrop-filter: blur(2px);
             display: flex;
@@ -577,6 +577,37 @@
         }
 
         .products-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .category-title {
+            color: var(--primary);
+            font-family: sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin: 0 0 1.5rem 0;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        .category-products-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
@@ -585,6 +616,7 @@
             margin: 0 auto;
             max-width: 100%;
             place-items: center;
+            width: 100%;
         }
 
         .product {
@@ -1188,6 +1220,15 @@
             }
 
             .products-grid {
+                gap: 2rem;
+            }
+
+            .category-title {
+                font-size: 1.5rem;
+                margin: 0 0 1rem 0;
+            }
+
+            .category-products-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 1rem;
                 justify-content: center;
@@ -1415,10 +1456,33 @@
             .feature-card h3 {
                 font-size: 1.2rem;
             }
+
+            .category-title {
+                font-size: 1.6rem;
+            }
+
+            .category-products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.2rem;
+            }
         }
 
         @media (max-width: 640px) {
             .products-grid {
+                gap: 1.5rem;
+            }
+
+            .category-title {
+                font-size: 1.3rem;
+                margin: 0 0 0.8rem 0;
+            }
+
+            .category-title::after {
+                width: 40px;
+                height: 2px;
+            }
+
+            .category-products-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.8rem;
             }
@@ -1462,6 +1526,22 @@
             }
 
             .products-grid {
+                gap: 1.2rem;
+                padding: 0 0.5rem;
+            }
+
+            .category-title {
+                font-size: 1.1rem;
+                margin: 0 0 0.6rem 0;
+                padding-bottom: 0.3rem;
+            }
+
+            .category-title::after {
+                width: 30px;
+                height: 2px;
+            }
+
+            .category-products-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
                 padding: 0 0.5rem;
@@ -1929,7 +2009,13 @@
             try {
                 const { data: products, error } = await supabaseClient
                     .from('products')
-                    .select('*')
+                    .select(`
+                        *,
+                        categories (
+                            id,
+                            name
+                        )
+                    `)
                     .order('created_at', { ascending: false })
 
                 if (error) throw error
@@ -1937,27 +2023,36 @@
                 const productsGrid = document.getElementById('productsGrid')
                 productsGrid.innerHTML = ''
 
+                // Group products by category
+                const productsByCategory = {}
+                const uncategorizedProducts = []
+
                 products.forEach(product => {
-                    const productElement = document.createElement('div')
-                    productElement.className = 'product'
-                    productElement.innerHTML = `
-                        <div class="product-image">
-                            <img src="${product.image_url}" alt="${product.name}" class="product-img-real">
-                        </div>
-                        <div class="product-info">
-                            <h3>${product.name}</h3>
-                            <p>${product.description}</p>
-                            <div class="product-price">R$ ${product.price.toFixed(2)}</div>
-                            <div class="product-quantity">
-                                <button class="quantity-btn">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1">
-                                <button class="quantity-btn">+</button>
-                            </div>
-                            <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price})">Adicionar ao Carrinho</button>
-                        </div>
-                    `
-                    productsGrid.appendChild(productElement)
+                    if (product.categories) {
+                        const categoryName = product.categories.name
+                        if (!productsByCategory[categoryName]) {
+                            productsByCategory[categoryName] = []
+                        }
+                        productsByCategory[categoryName].push(product)
+                    } else {
+                        uncategorizedProducts.push(product)
+                    }
                 })
+
+                // Sort categories alphabetically
+                const sortedCategories = Object.keys(productsByCategory).sort()
+
+                // Create sections for each category
+                sortedCategories.forEach(categoryName => {
+                    if (productsByCategory[categoryName].length > 0) {
+                        createCategorySection(categoryName, productsByCategory[categoryName], productsGrid)
+                    }
+                })
+
+                // Add uncategorized products if any
+                if (uncategorizedProducts.length > 0) {
+                    createCategorySection('Produtos', uncategorizedProducts, productsGrid)
+                }
 
                 // Add quantity button listeners
                 document.querySelectorAll('.quantity-btn').forEach(button => {
@@ -1976,6 +2071,43 @@
                 console.error('Error loading products:', error)
                 alert('Erro ao carregar produtos')
             }
+        }
+
+        // Create category section
+        function createCategorySection(categoryName, categoryProducts, container) {
+            // Create category title
+            const categoryTitle = document.createElement('h3')
+            categoryTitle.className = 'category-title'
+            categoryTitle.textContent = categoryName
+            container.appendChild(categoryTitle)
+
+            // Create products grid for this category
+            const categoryGrid = document.createElement('div')
+            categoryGrid.className = 'category-products-grid'
+
+            categoryProducts.forEach(product => {
+                const productElement = document.createElement('div')
+                productElement.className = 'product'
+                productElement.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image_url}" alt="${product.name}" class="product-img-real">
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <div class="product-price">R$ ${product.price.toFixed(2)}</div>
+                        <div class="product-quantity">
+                            <button class="quantity-btn">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn">+</button>
+                        </div>
+                        <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price})">Adicionar ao Carrinho</button>
+                    </div>
+                `
+                categoryGrid.appendChild(productElement)
+            })
+
+            container.appendChild(categoryGrid)
         }
 
         // Load products when page loads
