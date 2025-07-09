@@ -2309,6 +2309,7 @@
                             name
                         )
                     `)
+                    .eq('is_active', true) // Only fetch active products
                     .order('created_at', { ascending: false })
 
                 if (error) throw error

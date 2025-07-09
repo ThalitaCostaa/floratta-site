@@ -112,6 +112,33 @@
             opacity: 0.8;
         }
 
+        .status-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .toggle-btn.active {
+            color: #28a745; /* green */
+        }
+
+        .toggle-btn.inactive {
+            color: #dc3545; /* red */
+        }
+
         /* Modal styles */
         .modal {
             display: none;
@@ -202,6 +229,35 @@
             max-width: 100px;
             max-height: 100px;
             margin-top: 0.5rem;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 4px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .filter-group select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 200px;
+            background: var(--white);
         }
 
         /* Categories styles */
@@ -380,6 +436,16 @@
                 gap: 0.5rem;
             }
 
+            .filters-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0.8rem;
+            }
+
+            .filter-group select {
+                width: 100%;
+            }
+
             /* Transform table into cards on mobile */
             .products-table {
                 display: none;
@@ -444,6 +510,13 @@
                 font-size: 1.1rem;
                 font-weight: bold;
                 color: var(--primary);
+            }
+
+            .product-card-status {
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+                border-top: 1px solid #eee;
+                text-align: right;
             }
 
             .product-card-actions {
@@ -633,6 +706,15 @@
             </div>
         </div>
 
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="categoryFilter">Filtrar por Categoria:</label>
+                <select id="categoryFilter" onchange="filterProductsByCategory()">
+                    <option value="">Todas as Categorias</option>
+                </select>
+            </div>
+        </div>
+
         <table class="products-table">
             <thead>
                 <tr>
@@ -641,6 +723,7 @@
                     <th>Categoria</th>
                     <th>Descrição</th>
                     <th>Preço</th>
+                    <th>Status</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -726,6 +809,13 @@
                     <input type="file" id="productImage" accept="image/*">
                     <img id="imagePreview" class="product-image-preview" style="display: none;">
                 </div>
+                <div class="form-group">
+                    <label for="productActive">Status do Produto</label>
+                    <div>
+                        <input type="checkbox" id="productActive" checked>
+                        <label for="productActive">Ativo (visível no site)</label>
+                    </div>
+                </div>
                 <div class="modal-buttons">
                     <button type="button" class="cancel-btn" onclick="closeProductModal()">Cancelar</button>
                     <button type="submit" class="save-btn">Salvar</button>
@@ -756,6 +846,7 @@
             document.getElementById('adminContainer').style.display = 'block'
             loadProducts()
             loadCategoriesForProduct()
+            loadCategoryFilter()
         }
 
         function showLoginForm() {
@@ -784,9 +875,9 @@
         })
 
         // Load products
-        async function loadProducts() {
+        async function loadProducts(categoryId = null) {
             try {
-                const { data: products, error } = await supabaseClient
+                let query = supabaseClient
                     .from('products')
                     .select(`
                         *,
@@ -794,8 +885,13 @@
                             id,
                             name
                         )
-                    `)
-                    .order('created_at', { ascending: false })
+                    `);
+
+                if (categoryId) {
+                    query = query.eq('category_id', categoryId);
+                }
+                
+                const { data: products, error } = await query.order('created_at', { ascending: false });
 
                 if (error) throw error
 
@@ -811,6 +907,7 @@
 
                 products.forEach(product => {
                     const categoryName = product.categories ? product.categories.name : 'Sem categoria'
+                    const isActive = product.is_active === null ? true : product.is_active;
                     
                     // Table row for desktop
                     const row = document.createElement('tr')
@@ -821,6 +918,14 @@
                         <td>${product.description}</td>
                         <td>R$ ${product.price.toFixed(2)}</td>
                         <td>
+                            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                ${isActive ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn toggle-btn ${isActive ? 'active' : 'inactive'}" onclick="toggleProductStatus(${product.id}, ${isActive})" title="${isActive ? 'Desativar' : 'Ativar'}">
+                                <i class="fas ${isActive ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            </button>
                             <button class="action-btn edit-btn" onclick="editProduct(${product.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -844,7 +949,15 @@
                                 <div class="product-card-price">R$ ${product.price.toFixed(2)}</div>
                             </div>
                         </div>
+                        <div class="product-card-status">
+                             <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                Status: ${isActive ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </div>
                         <div class="product-card-actions">
+                            <button class="action-btn toggle-btn ${isActive ? 'active' : 'inactive'}" onclick="toggleProductStatus(${product.id}, ${isActive})" title="${isActive ? 'Desativar' : 'Ativar'}">
+                                <i class="fas ${isActive ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                            </button>
                             <button class="action-btn edit-btn" onclick="editProduct(${product.id})" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -877,6 +990,7 @@
                 form.reset()
                 document.getElementById('productId').value = ''
                 document.getElementById('imagePreview').style.display = 'none'
+                document.getElementById('productActive').checked = true; // Reset checkbox to true
             }
             
             modal.style.display = 'flex'
@@ -990,6 +1104,34 @@
             }
         }
 
+        function filterProductsByCategory() {
+            const categoryId = document.getElementById('categoryFilter').value;
+            loadProducts(categoryId);
+        }
+
+        async function loadCategoryFilter() {
+            try {
+                const { data: categories, error } = await supabaseClient
+                    .from('categories')
+                    .select('*')
+                    .order('name', { ascending: true });
+
+                if (error) throw error;
+
+                const filterSelect = document.getElementById('categoryFilter');
+                filterSelect.innerHTML = '<option value="">Todas as Categorias</option>'; 
+
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    filterSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading categories for filter:', error);
+            }
+        }
+
         // Edit category
         async function editCategory(categoryId) {
             try {
@@ -1099,6 +1241,7 @@
                 document.getElementById('productName').value = product.name
                 document.getElementById('productDescription').value = product.description
                 document.getElementById('productPrice').value = product.price
+                document.getElementById('productActive').checked = product.is_active === null ? true : product.is_active;
                 
                 // Set category if it exists
                 if (product.category_id) {
@@ -1194,6 +1337,7 @@
             const description = document.getElementById('productDescription').value
             const price = parseFloat(document.getElementById('productPrice').value)
             const imageFile = document.getElementById('productImage').files[0]
+            const isActive = document.getElementById('productActive').checked
 
             try {
                 let imageUrl = null
@@ -1218,6 +1362,7 @@
                     description,
                     price,
                     category_id: categoryId || null,
+                    is_active: isActive,
                     ...(imageUrl && { image_url: imageUrl })
                 }
 
@@ -1244,6 +1389,26 @@
                 alert('Erro ao salvar produto')
             }
         })
+
+        // Toggle product status
+        async function toggleProductStatus(productId, currentStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('products')
+                    .update({ is_active: !currentStatus })
+                    .eq('id', productId);
+
+                if (error) throw error;
+
+                // Reload products to reflect the change
+                const categoryId = document.getElementById('categoryFilter').value;
+                loadProducts(categoryId);
+                alert('Status do produto atualizado com sucesso!');
+            } catch (error) {
+                console.error('Error toggling product status:', error);
+                alert('Erro ao atualizar o status do produto.');
+            }
+        }
 
         // Check auth state on page load
         checkAuth()
