@@ -121,6 +121,63 @@
             width: 100%;
         }
 
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-toggle .fas {
+            font-size: 0.7em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            display: none;
+            background-color: var(--light);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border: 1px solid rgba(184, 134, 11, 0.1);
+            width: 100%;
+            min-width: 180px;
+            padding: 0.5rem 0;
+            margin-top: 5px;
+            opacity: 1;
+            transform: none;
+            transition: none;
+            border-radius: 8px;
+            left: 0;
+            z-index: 10002;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1rem !important;
+            background: transparent !important;
+            margin-bottom: 0 !important;
+            border-radius: 0 !important;
+            color: var(--secondary) !important;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(184, 134, 11, 0.08) !important;
+            color: var(--primary) !important;
+        }
+
+        /* Override nav a styles for dropdown link */
+        .dropdown-menu a::after {
+            display: none !important; /* No underline effect needed here */
+        }
+
         .hero {
             color: var(--white);
             padding: 0;
@@ -874,7 +931,7 @@
             width: 100%;
             height: 100%;
             background: rgba(58, 58, 58, 0.6);
-            z-index: 10000;
+            z-index: 10002;
             align-items: center;
             justify-content: center;
         }
@@ -1103,6 +1160,7 @@
             }
 
             nav {
+                position: relative;
                 width: 100%;
                 justify-content: center;
                 flex-wrap: wrap;
@@ -1433,6 +1491,67 @@
             .carousel-nav.next {
                 right: 10px;
             }
+
+            .dropdown {
+                position: static;
+                display: block; /* Make it take full width if needed or adjust container */
+                text-align: center;
+            }
+            
+            .dropdown-toggle {
+                justify-content: center;
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                z-index: 10002;
+                display: none;
+                background-color: var(--light);
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                border: 1px solid rgba(184, 134, 11, 0.1);
+                width: 100%;
+                min-width: 0;
+                padding: 0.5rem 0;
+                margin-top: 0.5rem;
+                border-radius: 8px;
+            }
+
+            .dropdown.active .dropdown-menu {
+                display: block;
+            }
+
+            .dropdown.active .dropdown-toggle .fas {
+                transform: rotate(180deg);
+            }
+            
+            .dropdown-menu a {
+                display: block;
+                padding: 0.5rem 1rem !important;
+                background: transparent !important;
+                margin-bottom: 0 !important;
+                border-radius: 0 !important;
+                color: var(--secondary) !important;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            .dropdown-menu a:hover {
+                background: rgba(184, 134, 11, 0.08) !important;
+                color: var(--primary) !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .dropdown:hover .dropdown-menu {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .dropdown:hover .dropdown-toggle .fas {
+                transform: rotate(180deg);
+            }
         }
 
         @media (max-width: 900px) {
@@ -1758,7 +1877,7 @@
             padding: 1rem 1.5rem;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 10000;
+            z-index: 10003;
             font-weight: 500;
             animation: slideInRight 0.3s ease-out;
         }
@@ -1774,7 +1893,7 @@
             padding: 3rem 2.5rem;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            z-index: 10000;
+            z-index: 10002;
             max-width: 400px;
             width: 90%;
             animation: bounceIn 0.6s ease-out;
@@ -1853,9 +1972,16 @@
         <div class="header-content">
             <div class="logo"><a href="index.html"><img src="logo.png" alt="Floratta Flowers" class="logo-img"></a></div>
             <nav>
-                <a href="#produtos">PRODUTOS</a>
-                <a href="sobre.html">SOBRE NÓS</a>
-                <a href="contato.html">CONTATO</a>
+                <div class="dropdown">
+                    <a href="#produtos" class="dropdown-toggle nav-link">
+                        PRODUTOS <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu" id="category-menu">
+                        <!-- Categorias carregadas aqui -->
+                    </div>
+                </div>
+                <a href="sobre.html" class="nav-link">SOBRE NÓS</a>
+                <a href="contato.html" class="nav-link">CONTATO</a>
             </nav>
             <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
         </div>
@@ -2022,6 +2148,8 @@
 
                 const productsGrid = document.getElementById('productsGrid')
                 productsGrid.innerHTML = ''
+                const categoryMenu = document.getElementById('category-menu');
+                categoryMenu.innerHTML = ''; // Clear existing items
 
                 // Group products by category
                 const productsByCategory = {}
@@ -2045,7 +2173,15 @@
                 // Create sections for each category
                 sortedCategories.forEach(categoryName => {
                     if (productsByCategory[categoryName].length > 0) {
-                        createCategorySection(categoryName, productsByCategory[categoryName], productsGrid)
+                        createCategorySection(categoryName, productsByCategory[categoryName], productsGrid);
+
+                        // Add category to dropdown menu
+                        const categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        const link = document.createElement('a');
+                        link.href = `#${categoryId}`;
+                        link.textContent = categoryName;
+                        link.classList.add('dropdown-item'); // Add class for event handling
+                        categoryMenu.appendChild(link);
                     }
                 })
 
@@ -2075,10 +2211,12 @@
 
         // Create category section
         function createCategorySection(categoryName, categoryProducts, container) {
+            const categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             // Create category title
             const categoryTitle = document.createElement('h3')
             categoryTitle.className = 'category-title'
             categoryTitle.textContent = categoryName
+            categoryTitle.id = categoryId;
             container.appendChild(categoryTitle)
 
             // Create products grid for this category
@@ -2207,13 +2345,29 @@
 
         // Adicionar listener para links âncora dentro da página
         document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' && e.target.getAttribute('href') && e.target.getAttribute('href').startsWith('#')) {
+            const anchor = e.target.closest('a');
+            if (anchor && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
+                const isDropdownToggle = anchor.classList.contains('dropdown-toggle');
+                
+                // Em mobile, o toggle do dropdown é tratado separadamente
+                if (isMobileDevice() && isDropdownToggle) {
+                    return; 
+                }
+                
                 e.preventDefault();
-                const hash = e.target.getAttribute('href');
+                const hash = anchor.getAttribute('href');
                 smoothScrollToAnchor(hash);
                 
                 // Atualizar URL sem recarregar página
-                history.pushState(null, null, hash);
+                if (history.pushState) {
+                    history.pushState(null, null, hash);
+                }
+
+                // Em mobile, fechar o dropdown após clicar em um item
+                if (isMobileDevice() && anchor.classList.contains('dropdown-item')) {
+                    const dropdown = document.querySelector('.dropdown');
+                    dropdown.classList.remove('active');
+                }
             }
         });
 
@@ -2455,6 +2609,24 @@
                 removeCartItem(index);
             }
         });
+
+        // Dropdown toggle para mobile
+        if (isMobileDevice()) {
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+            });
+
+            // Fechar se clicar fora
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
 
     </script>
     
