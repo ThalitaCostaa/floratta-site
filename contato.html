@@ -237,6 +237,34 @@
             color: var(--secondary);
         }
 
+        .cart-link {
+            position: relative;
+            color: var(--primary);
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .cart-link:hover {
+            color: var(--secondary);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: var(--secondary);
+            color: var(--white);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
             header {
                 height: auto;
@@ -245,13 +273,17 @@
             }
             
             .header-content {
-                padding: 0 1rem;
-                flex-direction: column;
-                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .logo {
-                margin-bottom: 0.5rem;
+                flex-basis: auto;
+                justify-content: flex-start;
+                margin-bottom: 0;
+                order: 1;
             }
 
             .logo-img {
@@ -263,6 +295,9 @@
                 justify-content: center;
                 flex-wrap: wrap;
                 gap: 0.5rem;
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 0.5rem;
             }
 
             nav a {
@@ -311,8 +346,12 @@
                 width: 80% !important;
             }
 
+            .header-icons {
+                order: 2;
+            }
+
             .admin-link {
-                display: none;
+                display: block; /* Garante que o ícone de admin apareça no mobile */
             }
 
             main {
@@ -536,88 +575,71 @@
     </style>
 </head>
 <body>
-<header>
-    <div class="header-content">
-        <div class="logo"><a href="index.html"><img src="logo.png" alt="Floratta Flowers" class="logo-img"></a></div>
-        <nav>
-            <a href="index.html#produtos">PRODUTOS</a>
-            <a href="sobre.html">SOBRE NÓS</a>
-            <a href="contato.html">CONTATO</a>
-        </nav>
-        <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
-    </div>
-</header>
-<main>
-    <div class="contact-container">
-        <h1>Entre em Contato Conosco</h1>
-        <div class="contact-info">
-            <div class="contact-item">
-                <i class="fas fa-envelope"></i>
-                <a href="mailto:francelisekertelt@hotmail.com">francelisekertelt@hotmail.com</a>
-            </div>
-            <div class="contact-item">
-                <i class="fas fa-phone"></i>
-                <a href="tel:+5547996880094">(47) 99688-0094</a>
-            </div>
-            <div class="contact-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Av. Celso Ramos n° 333 - Centro - Garuva - Santa Catarina</span>
-            </div>
-            <div class="contact-item">
-                <i class="fab fa-instagram"></i>
-                <a href="https://instagram.com/floratta_flowers" target="_blank">@floratta_flowers</a>
-            </div>
-            <div class="contact-item">
-                <i class="fas fa-clock"></i>
-                <span>13h30 às 18h00</span>
+    <header>
+        <div class="header-content">
+            <div class="logo"><a href="index.html"><img src="logo.png" alt="Floratta Flowers" class="logo-img"></a></div>
+            <nav>
+                <a href="index.html#produtos">PRODUTOS</a>
+                <a href="sobre.html">SOBRE NÓS</a>
+                <a href="contato.html">CONTATO</a>
+            </nav>
+            <div class="header-icons">
+                <a href="index.html" class="cart-link" title="Ver carrinho">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
             </div>
         </div>
-    </div>
-</main>
+    </header>
+    <main>
+        <div class="contact-container">
+            <h1>Entre em Contato Conosco</h1>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:francelisekertelt@hotmail.com">francelisekertelt@hotmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+5547996880094">(47) 99688-0094</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Av. Celso Ramos n° 333 - Centro - Garuva - Santa Catarina</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <a href="https://instagram.com/floratta_flowers" target="_blank">@floratta_flowers</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-clock"></i>
+                    <span>13h30 às 18h00</span>
+                </div>
+            </div>
+        </div>
+    </main>
 
-<script>
-// Adicionar animações touch para navegação mobile
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('nav a');
-    
-    navLinks.forEach(link => {
-        // Touch start - adiciona classe ativa
-        link.addEventListener('touchstart', function(e) {
-            this.classList.add('touch-active');
-        }, { passive: true });
-        
-        // Touch end - remove classe ativa
-        link.addEventListener('touchend', function(e) {
-            setTimeout(() => {
-                this.classList.remove('touch-active');
-            }, 150);
-        }, { passive: true });
-        
-        // Touch cancel - remove classe ativa
-        link.addEventListener('touchcancel', function(e) {
-            this.classList.remove('touch-active');
-        }, { passive: true });
-        
-        // Mouse events para desktop (manter compatibilidade)
-        link.addEventListener('mousedown', function(e) {
-            if (window.innerWidth <= 768) {
-                this.classList.add('touch-active');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                const savedCart = sessionStorage.getItem('florattaCart');
+                if (savedCart) {
+                    const cart = JSON.parse(savedCart);
+                    cartCountElement.textContent = cart.length;
+                }
             }
         });
-        
-        link.addEventListener('mouseup', function(e) {
-            setTimeout(() => {
-                this.classList.remove('touch-active');
-            }, 150);
-        });
-        
-        link.addEventListener('mouseleave', function(e) {
-            this.classList.remove('touch-active');
-        });
-    });
-});
-</script>
-
+    </script>
+    
+    <style>
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+    </style>
 </body>
 
 <!-- Footer do Desenvolvedor -->

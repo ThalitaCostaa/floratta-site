@@ -209,6 +209,35 @@
         .admin-link:hover {
             color: var(--secondary);
         }
+
+        .cart-link {
+            position: relative;
+            color: var(--primary);
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .cart-link:hover {
+            color: var(--secondary);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: var(--secondary);
+            color: var(--white);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
             header {
                 height: auto;
@@ -217,13 +246,17 @@
             }
             
             .header-content {
-                padding: 0 1rem;
-                flex-direction: column;
-                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .logo {
-                margin-bottom: 0.5rem;
+                flex-basis: auto;
+                justify-content: flex-start;
+                margin-bottom: 0;
+                order: 1;
             }
 
             .logo-img {
@@ -235,6 +268,9 @@
                 justify-content: center;
                 flex-wrap: wrap;
                 gap: 0.5rem;
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 0.5rem;
             }
 
             nav a {
@@ -283,8 +319,12 @@
                 width: 80% !important;
             }
 
+            .header-icons {
+                order: 2;
+            }
+
             .admin-link {
-                display: none;
+                display: block; /* Garante que o ícone de admin apareça no mobile */
             }
 
             main {
@@ -457,7 +497,13 @@
             <a href="sobre.html">SOBRE NÓS</a>
             <a href="contato.html">CONTATO</a>
         </nav>
-        <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
+        <div class="header-icons">
+            <a href="index.html" class="cart-link" title="Ver carrinho">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+            <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
+        </div>
     </div>
 </header>
 <main>
@@ -523,6 +569,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+    .header-icons {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+</style>
 
 </body>
 
@@ -611,5 +665,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartCountElement = document.querySelector('.cart-count');
+        if (cartCountElement) {
+            const savedCart = sessionStorage.getItem('florattaCart');
+            if (savedCart) {
+                const cart = JSON.parse(savedCart);
+                cartCountElement.textContent = cart.length;
+            }
+        }
+    });
+</script>
 
 </html> 

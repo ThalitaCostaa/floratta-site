@@ -946,6 +946,25 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            position: relative; /* Para posicionar o botão de fechar */
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1;
+            font-weight: 300;
+            z-index: 1;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--secondary);
+            transform: scale(1.1);
         }
 
         .modal-content h2 {
@@ -1384,6 +1403,12 @@
                 margin: 0.5rem auto;
                 max-height: 85vh;
                 overflow-y: auto;
+            }
+
+            .close-modal-btn {
+                top: 10px;
+                right: 15px;
+                font-size: 1.8rem;
             }
 
             .modal-content h2 {
@@ -2111,6 +2136,7 @@
 
     <div class="delivery-modal" id="deliveryModal">
         <div class="modal-content">
+            <span class="close-modal-btn" onclick="closeDeliveryModal()">&times;</span>
             <h2>Seu Carrinho</h2>
             <div id="cartItemsList">
                 <!-- Itens do carrinho serão listados aqui -->
@@ -2213,6 +2239,30 @@
         let cart = [];
         let cartTotal = 0;
         let freteValue = 0;
+
+        function updateCartCount() {
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = cart.length;
+            }
+        }
+
+        function saveCartToSession() {
+            sessionStorage.setItem('florattaCart', JSON.stringify(cart));
+        }
+
+        function loadCartFromSession() {
+            const savedCart = sessionStorage.getItem('florattaCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                cartTotal = cart.reduce((total, item) => total + item.price, 0);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCartFromSession();
+            updateCartCount();
+        });
 
         // Load products from Supabase
         async function loadProducts() {
@@ -2465,18 +2515,22 @@
             }
         });
 
-        function updateCartCount() {
-            document.querySelector('.cart-count').textContent = cart.length;
-        }
-
         function addToCart(product, price) {
-            const quantity = parseInt(event.target.parentElement.querySelector('.quantity-input').value);
-            for(let i = 0; i < quantity; i++) {
-                cart.push({name: product, price: price});
+            const quantityInput = event.target.parentElement.querySelector('.quantity-input');
+            const quantity = parseInt(quantityInput.value);
+
+            if (quantity > 0) {
+                for(let i = 0; i < quantity; i++) {
+                    cart.push({name: product, price: price});
+                }
+                cartTotal += price * quantity;
+                updateCartCount();
+                saveCartToSession();
+                showNotification(`${quantity}x ${product} adicionado(s) ao carrinho!`);
+                
+                // Resetar a quantidade para 1
+                quantityInput.value = 1;
             }
-            cartTotal += price * quantity;
-            updateCartCount();
-            showNotification(`${quantity}x ${product} adicionado ao carrinho!`);
         }
 
         function showNotification(message) {
@@ -2582,6 +2636,7 @@
             cartTotal -= cart[index].price;
             cart.splice(index, 1);
             updateCartCount();
+            saveCartToSession();
             renderCartItems(); // Renderiza a lista atualizada
             showNotification("Item removido do carrinho!");
         }
@@ -2673,6 +2728,7 @@
             cartTotal = 0;
             freteValue = 0;
             updateCartCount();
+            saveCartToSession();
         });
 
         function getPaymentMethodName(method) {
