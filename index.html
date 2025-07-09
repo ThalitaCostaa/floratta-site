@@ -2123,7 +2123,7 @@
     </section>
 
     <section class="products" id="produtos">
-        <h2>NOSSOS PRODUTOS</h2>
+        <h2 id="products-main-title">NOSSOS PRODUTOS</h2>
         <div class="products-grid" id="productsGrid">
             <!-- Products will be loaded here -->
         </div>
@@ -2240,6 +2240,39 @@
         let cartTotal = 0;
         let freteValue = 0;
 
+        function showAllProducts() {
+            const productsSection = document.getElementById('produtos');
+            if (productsSection) productsSection.style.display = 'block';
+
+            const allCategories = document.querySelectorAll('.category-section');
+            const productsTitle = document.getElementById('products-main-title');
+            if (productsTitle) productsTitle.style.display = 'block';
+            allCategories.forEach(categorySection => {
+                categorySection.style.display = 'block';
+            });
+        }
+
+        function filterProductsByCategory(categoryNameToFilter) {
+            const productsSection = document.getElementById('produtos');
+            if (productsSection) productsSection.style.display = 'block';
+
+            const allCategories = document.querySelectorAll('.category-section');
+            const productsTitle = document.getElementById('products-main-title');
+            if (productsTitle) productsTitle.style.display = 'block';
+            allCategories.forEach(categorySection => {
+                if (categorySection.dataset.categoryName === categoryNameToFilter) {
+                    categorySection.style.display = 'block';
+                } else {
+                    categorySection.style.display = 'none';
+                }
+            });
+        }
+
+        function hideAllProducts() {
+            const productsSection = document.getElementById('produtos');
+            if (productsSection) productsSection.style.display = 'none';
+        }
+
         function updateCartCount() {
             const cartCountElement = document.querySelector('.cart-count');
             if (cartCountElement) {
@@ -2284,6 +2317,14 @@
                 productsGrid.innerHTML = ''
                 const categoryMenu = document.getElementById('category-menu');
                 categoryMenu.innerHTML = ''; // Clear existing items
+
+                // Add "Todos os Produtos" link
+                const allProductsLink = document.createElement('a');
+                allProductsLink.href = '#produtos';
+                allProductsLink.textContent = 'Todos os Produtos';
+                allProductsLink.classList.add('dropdown-item');
+                allProductsLink.id = 'show-all-products-link';
+                categoryMenu.appendChild(allProductsLink);
 
                 // Group products by category
                 const productsByCategory = {}
@@ -2337,6 +2378,8 @@
                         }
                     })
                 })
+
+                hideAllProducts(); // Hide all products initially
             } catch (error) {
                 console.error('Error loading products:', error)
                 alert('Erro ao carregar produtos')
@@ -2345,13 +2388,17 @@
 
         // Create category section
         function createCategorySection(categoryName, categoryProducts, container) {
+            const categorySection = document.createElement('div');
+            categorySection.className = 'category-section';
+            categorySection.dataset.categoryName = categoryName;
+
             const categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             // Create category title
             const categoryTitle = document.createElement('h3')
             categoryTitle.className = 'category-title'
             categoryTitle.textContent = categoryName
             categoryTitle.id = categoryId;
-            container.appendChild(categoryTitle)
+            categorySection.appendChild(categoryTitle)
 
             // Create products grid for this category
             const categoryGrid = document.createElement('div')
@@ -2379,7 +2426,8 @@
                 categoryGrid.appendChild(productElement)
             })
 
-            container.appendChild(categoryGrid)
+            categorySection.appendChild(categoryGrid)
+            container.appendChild(categorySection)
         }
 
         // Load products when page loads
@@ -2482,25 +2530,33 @@
             const anchor = e.target.closest('a');
             if (anchor && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
                 const isDropdownToggle = anchor.classList.contains('dropdown-toggle');
+                const isDropdownItem = anchor.classList.contains('dropdown-item');
                 
-                // Em mobile, o toggle do dropdown é tratado separadamente
-                if (isMobileDevice() && isDropdownToggle) {
-                    return; 
-                }
-                
-                e.preventDefault();
-                const hash = anchor.getAttribute('href');
-                smoothScrollToAnchor(hash);
-                
-                // Atualizar URL sem recarregar página
-                if (history.pushState) {
-                    history.pushState(null, null, hash);
-                }
+                if (isDropdownToggle || isDropdownItem) {
+                    e.preventDefault();
 
-                // Em mobile, fechar o dropdown após clicar em um item
-                if (isMobileDevice() && anchor.classList.contains('dropdown-item')) {
-                    const dropdown = document.querySelector('.dropdown');
-                    dropdown.classList.remove('active');
+                    if (anchor.id === 'show-all-products-link') {
+                        showAllProducts();
+                    } else if (isDropdownToggle) {
+                        hideAllProducts();
+                    } else if (isDropdownItem) {
+                        const categoryName = anchor.textContent;
+                        filterProductsByCategory(categoryName);
+                    }
+
+                    const hash = anchor.getAttribute('href');
+                    smoothScrollToAnchor(hash);
+                    
+                    // Atualizar URL sem recarregar página
+                    if (history.pushState) {
+                        history.pushState(null, null, hash);
+                    }
+
+                    // Em mobile, fechar o dropdown após clicar em um item
+                    if (isMobileDevice() && isDropdownItem) {
+                        const dropdown = document.querySelector('.dropdown');
+                        dropdown.classList.remove('active');
+                    }
                 }
             }
         });
