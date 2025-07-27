@@ -1,0 +1,123 @@
+/* css/mascote.css */
+
+.mascote-container {
+    position: fixed;
+    /* 
+      Posição vertical: base do carrinho (2rem) + altura do carrinho (60px) + espaço (10px) 
+      Posição horizontal: alinha o centro do mascote com o centro do carrinho.
+    */
+    bottom: calc(2rem + 70px); 
+    right: 2rem; /* Distância da borda */
+    left: auto; /* Reseta o 'left' */
+    transform: translateX(calc(50% - 30px)); /* Move 50% para a direita e ajusta pela metade da largura do carrinho (60px / 2) */
+
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mascote-imagem {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.mascote-imagem:hover {
+    transform: scale(1.1);
+}
+
+.balao-fala {
+    position: absolute;
+    bottom: 5px; /* Alinha a base do balão com a do mascote */
+    right: 85px; /* Posiciona à esquerda do mascote (70px de imagem + 15px de espaço) */
+    width: max-content; /* Força o balão a usar a largura necessária */
+    max-width: 350px; /* Limite máximo de largura */
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.9);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s 0.4s;
+    z-index: -1;
+}
+
+.balao-fala.visivel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s;
+}
+
+.balao-fala::after {
+    content: '';
+    position: absolute;
+    top: 50%; /* Alinha a seta verticalmente ao centro do balão */
+    right: -10px; /* Posiciona a seta para fora, à direita */
+    transform: translateY(-50%); /* Ajuste fino para centralização vertical */
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #ffffff;
+}
+
+.balao-fala p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .mascote-container {
+        bottom: calc(1rem + 65px);
+        right: 1rem;
+        transform: translateX(calc(50% - 25px));
+    }
+
+    .mascote-imagem {
+        width: 60px;
+        height: 60px;
+    }
+
+    .balao-fala {
+        right: 75px; /* Ajuste para mascote de 60px + 15px de espaço */
+        max-width: 300px;
+        padding: 12px;
+    }
+
+    .balao-fala p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .mascote-container {
+        bottom: calc(1rem + 55px);
+        right: 1rem;
+        transform: translateX(calc(50% - 22.5px));
+    }
+
+    .mascote-imagem {
+        width: 50px;
+        height: 50px;
+    }
+
+    .balao-fala {
+        right: 65px; /* Ajuste para mascote de 50px + 15px de espaço */
+        max-width: 250px;
+        padding: 10px;
+    }
+
+    .balao-fala p {
+        font-size: 0.8rem;
+    }
+} 

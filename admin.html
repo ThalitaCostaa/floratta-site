@@ -62,6 +62,9 @@
             cursor: pointer;
             font-weight: 500;
             transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .add-product-btn:hover {
@@ -156,9 +159,56 @@
         .modal-content {
             background: var(--white);
             padding: 2rem;
-            border-radius: 8px;
+            border-radius: 25px;
             width: 90%;
             max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Specific styles for Product Modal scrolling */
+        #productModal .modal-content {
+            padding: 0 2rem;
+            overflow-y: hidden; /* Hide main scrollbar */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #productModal .modal-header {
+            padding-top: 2rem;
+            flex-shrink: 0;
+            padding-right: 1.5rem; /* Match form padding to keep alignment */
+        }
+
+        #productModal #productForm {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-bottom: 2rem;
+            padding-right: 1.5rem; /* Space for the scrollbar */
+        }
+
+        /* Custom Scrollbar Styling */
+        #productModal #productForm {
+             /* For Firefox */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        #productModal #productForm::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #productModal #productForm::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #productModal #productForm::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        #productModal #productForm::-webkit-scrollbar-thumb:hover {
+            background-color: #9e710a; /* Darker shade of primary */
         }
 
         .modal-header {
@@ -187,7 +237,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.5rem;
             border: 1px solid #ddd;
@@ -258,6 +309,64 @@
             border-radius: 4px;
             min-width: 200px;
             background: var(--white);
+        }
+
+        /* Toggle Switch for Product Status */
+        .status-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        input:checked + .slider:before {
+            -webkit-transform: translateX(22px);
+            -ms-transform: translateX(22px);
+            transform: translateX(22px);
+        }
+        .toggle-text-label {
+            cursor: pointer;
+            user-select: none;
+            font-weight: 400;
+            margin-bottom: 0;
         }
 
         /* Categories styles */
@@ -562,7 +671,8 @@
             }
 
             .form-group input,
-            .form-group textarea {
+            .form-group textarea,
+            .form-group select {
                 padding: 0.8rem;
                 font-size: 1rem;
                 border-radius: 6px;
@@ -664,7 +774,8 @@
             }
 
             .form-group input,
-            .form-group textarea {
+            .form-group textarea,
+            .form-group select {
                 padding: 0.7rem;
                 font-size: 0.9rem;
             }
@@ -706,6 +817,17 @@
             </div>
         </div>
 
+        <div class="mascote-frase-container">
+            <h3>Frase do Mascote</h3>
+            <p>Esta frase aparecerá no balão de fala do mascote na página inicial.</p>
+            <form id="mascoteForm">
+                <div class="form-group">
+                    <textarea id="fraseMascote" rows="3" placeholder="Digite a frase aqui..."></textarea>
+                </div>
+                <button type="submit" class="save-btn">Salvar Frase</button>
+            </form>
+        </div>
+
         <div class="filters-container">
             <div class="filter-group">
                 <label for="categoryFilter">Filtrar por Categoria:</label>
@@ -745,7 +867,7 @@
                 <h2>Gerenciar Categorias</h2>
                 <button class="close-modal" onclick="closeCategoriesModal()">&times;</button>
             </div>
-            <div style="margin-bottom: 1.5rem;">
+            <div id="newCategoryBtnContainer" style="margin-bottom: 1.5rem;">
                 <button class="add-product-btn" onclick="openCategoryForm()">
                     <i class="fas fa-plus"></i> Nova Categoria
                 </button>
@@ -766,6 +888,14 @@
                     <div class="form-group">
                         <label for="categoryDescription">Descrição (opcional)</label>
                         <textarea id="categoryDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryType">Tipo de Categoria</label>
+                        <select id="categoryType" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="floricultura">Floricultura</option>
+                            <option value="cafeteria">Cafeteria</option>
+                        </select>
                     </div>
                     <div class="modal-buttons">
                         <button type="button" class="cancel-btn" onclick="closeCategoryForm()">Cancelar</button>
@@ -810,10 +940,13 @@
                     <img id="imagePreview" class="product-image-preview" style="display: none;">
                 </div>
                 <div class="form-group">
-                    <label for="productActive">Status do Produto</label>
-                    <div>
-                        <input type="checkbox" id="productActive" checked>
-                        <label for="productActive">Ativo (visível no site)</label>
+                    <label>Status do Produto</label>
+                    <div class="status-toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="productActive" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <label for="productActive" class="toggle-text-label">Ativo (visível no site)</label>
                     </div>
                 </div>
                 <div class="modal-buttons">
@@ -847,6 +980,7 @@
             loadProducts()
             loadCategoriesForProduct()
             loadCategoryFilter()
+            loadMascoteFrase() // Carregar a frase do mascote
         }
 
         function showLoginForm() {
@@ -873,6 +1007,65 @@
                 document.getElementById('loginError').textContent = error.message
             }
         })
+        
+        // Carregar e salvar a frase do mascote
+        async function loadMascoteFrase() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('configuracoes')
+                    .select('frase_mascote')
+                    .limit(1) // Pega a primeira configuração que encontrar
+                    .single();
+
+                if (error && error.code !== 'PGRST116') { // Ignora erro se a tabela estiver vazia
+                    throw error;
+                }
+
+                if (data) {
+                    document.getElementById('fraseMascote').value = data.frase_mascote;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar a frase do mascote:', error);
+            }
+        }
+
+        document.getElementById('mascoteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const frase = document.getElementById('fraseMascote').value;
+
+            try {
+                // Verifica se já existe uma configuração
+                const { data: existing, error: fetchError } = await supabaseClient
+                    .from('configuracoes')
+                    .select('id')
+                    .limit(1)
+                    .single();
+
+                if (fetchError && fetchError.code !== 'PGRST116') {
+                    throw fetchError;
+                }
+
+                if (existing) {
+                    // Se existe, atualiza
+                    const { error } = await supabaseClient
+                        .from('configuracoes')
+                        .update({ frase_mascote: frase })
+                        .eq('id', existing.id);
+                    if (error) throw error;
+                } else {
+                    // Se não existe, insere uma nova
+                    const { error } = await supabaseClient
+                        .from('configuracoes')
+                        .insert({ frase_mascote: frase });
+                    if (error) throw error;
+                }
+
+                alert('Frase do mascote salva com sucesso!');
+            } catch (error) {
+                console.error('Erro ao salvar a frase do mascote:', error);
+                alert('Erro ao salvar a frase.');
+            }
+        });
 
         // Load products
         async function loadProducts(categoryId = null) {
@@ -1022,13 +1215,18 @@
             if (!categoryId) {
                 form.reset()
                 document.getElementById('categoryId').value = ''
+                document.getElementById('categoryType').value = 'floricultura'
             }
             
+            document.getElementById('categoriesListContainer').style.display = 'none';
+            document.getElementById('newCategoryBtnContainer').style.display = 'none';
             container.style.display = 'block'
         }
 
         function closeCategoryForm() {
             document.getElementById('categoryFormContainer').style.display = 'none'
+            document.getElementById('categoriesListContainer').style.display = 'block';
+            document.getElementById('newCategoryBtnContainer').style.display = 'block';
         }
 
         // Load categories
@@ -1055,9 +1253,11 @@
                 categories.forEach(category => {
                     const categoryItem = document.createElement('div')
                     categoryItem.className = 'category-item'
+                    const typeLabel = category.type === 'cafeteria' ? 'Cafeteria' : 'Floricultura';
                     categoryItem.innerHTML = `
                         <div class="category-info">
                             <h4>${category.name}</h4>
+                            <p><strong>Tipo:</strong> ${typeLabel}</p>
                             ${category.description ? `<p>${category.description}</p>` : ''}
                         </div>
                         <div class="category-actions">
@@ -1148,6 +1348,7 @@
                 document.getElementById('categoryId').value = category.id
                 document.getElementById('categoryName').value = category.name
                 document.getElementById('categoryDescription').value = category.description || ''
+                document.getElementById('categoryType').value = category.type || 'floricultura'
             } catch (error) {
                 console.error('Error loading category:', error)
                 alert('Erro ao carregar categoria')
@@ -1191,11 +1392,13 @@
             const categoryId = document.getElementById('categoryId').value
             const name = document.getElementById('categoryName').value
             const description = document.getElementById('categoryDescription').value
+            const type = document.getElementById('categoryType').value
 
             try {
                 const categoryData = {
                     name,
-                    description: description || null
+                    description: description || null,
+                    type: type || 'floricultura'
                 }
 
                 if (categoryId) {
@@ -1510,6 +1713,51 @@
                 display: block;
             }
         }
+    </style>
+    <style>
+    .mascote-frase-container {
+        background: var(--light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        border: 1px solid #ddd;
+    }
+
+    .mascote-frase-container h3 {
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .mascote-frase-container p {
+        margin-bottom: 1rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    #fraseMascote {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+        font-size: 1rem;
+    }
+
+    .mascote-frase-container .save-btn {
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        margin-top: 0.5rem;
+    }
+
+    .mascote-frase-container .save-btn:hover {
+        background: var(--secondary);
+    }
     </style>
 </body>
 </html> 

@@ -1,0 +1,26 @@
+:root {
+    --primary: #B8860B;
+    --secondary: #3A3A3A;
+    --accent: #C5D6CD;
+    --text: #333;
+    --light: #F7F2E8;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: var(--light);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* Add smooth scrolling to the whole page */
+html {
+    scroll-behavior: smooth;
+} 

@@ -1,0 +1,422 @@
+.cart {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary);
+    color: var(--white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease-in-out;
+    z-index: 9999;
+}
+
+.cart:hover {
+    transform: scale(1.05);
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--secondary);
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Modal de entrega */
+.delivery-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(58, 58, 58, 0.6);
+    z-index: 10002;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    position: relative; /* Para posicionar o botão de fechar */
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+    font-weight: 300;
+    z-index: 1;
+}
+
+.close-modal-btn:hover {
+    color: var(--secondary);
+    transform: scale(1.1);
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    font-family: sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+#cartItemsList {
+    margin-bottom: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    flex-grow: 1;
+    margin-right: 1rem;
+}
+
+.item-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.item-info p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.remove-item {
+    color: #8B9A8B;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: color 0.2s ease-in-out;
+}
+
+.remove-item:hover {
+    color: var(--primary);
+}
+
+.cart-summary {
+    margin-top: 1.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 2rem;
+}
+
+.subtotal, .frete-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #ddd;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-family: sans-serif;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-group textarea {
+    min-height: 80px; /* Altura mínima */
+    resize: vertical; /* Permite redimensionar verticalmente */
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-family: sans-serif;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.cancel-btn {
+    background: #ccc;
+    color: var(--secondary);
+}
+
+.cancel-btn:hover {
+    background: #bbb;
+}
+
+.confirm-btn {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.confirm-btn:hover {
+    background: var(--secondary);
+}
+
+/* Estilização da barra de rolagem */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
+
+/* Estilos para notificações */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--primary);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10003;
+    font-weight: 500;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.empty-cart-balloon {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--white);
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 10002;
+    max-width: 400px;
+    width: 90%;
+    animation: bounceIn 0.6s ease-out;
+}
+
+.empty-cart-balloon .cart-icon {
+    font-size: 4rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-cart-balloon h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-cart-balloon p {
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+
+.empty-cart-balloon .close-btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.empty-cart-balloon .close-btn:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Image Modal Styles */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10003; /* Higher than other elements */
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+    backdrop-filter: blur(5px);
+}
+
+.modal-image-content {
+    margin: auto;
+    display: block;
+    width: auto;
+    max-width: 80%;
+    max-height: 80vh;
+    border-radius: 8px;
+    animation-name: zoom;
+    animation-duration: 0.4s;
+}
+
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+    font-size: 1.2rem;
+    font-family: sans-serif;
+}
+
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}
+
+.close-image-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-image-modal:hover,
+.close-image-modal:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+} 
