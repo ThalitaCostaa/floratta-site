@@ -22,41 +22,43 @@ document.addEventListener('click', function(e) {
         
         if (isDropdownToggle || isDropdownItem) {
             e.preventDefault();
+            const hash = anchor.getAttribute('href');
 
-            // Handle menu toggles and category links
-            if (anchor.id === 'show-all-floricultura-link') {
-                showAllProducts();
-            } else if (anchor.id === 'show-all-cafeteria-link') {
-                showAllCafeteriaProducts();
-            } else if (isDropdownToggle) {
-                // Handle main menu toggles (FLORICULTURA and CAFETERIA)
-                const href = anchor.getAttribute('href');
-                if (href === '#floricultura') {
+            // 1. Run the correct filter function based on the link clicked
+            if (isDropdownToggle) {
+                // Main menu links (FLORES or CAFETERIA)
+                if (hash === '#floricultura') {
                     showAllProducts();
-                } else if (href === '#cafeteria') {
+                } else if (hash === '#cafeteria') {
                     showAllCafeteriaProducts();
-                } else {
-                    hideAllProducts();
                 }
             } else if (isDropdownItem) {
-                const categoryName = anchor.textContent;
-                // Check if it's a cafeteria category (has cafeteria-category- prefix)
-                if (anchor.getAttribute('href').includes('cafeteria-category-')) {
+                // Specific category links in the dropdown
+                const categoryName = anchor.textContent.trim();
+                if (hash.includes('cafeteria-category-')) {
                     filterCafeteriaByCategory(categoryName);
                 } else {
                     filterProductsByCategory(categoryName);
                 }
             }
 
-            const hash = anchor.getAttribute('href');
-            smoothScrollToAnchor(hash);
-            
-            // Atualizar URL sem recarregar página
-            if (history.pushState) {
-                history.pushState(null, null, hash);
+            // 2. Perform navigation after the filter has been applied
+            const navigationAction = () => {
+                smoothScrollToAnchor(hash);
+                if (history.pushState) {
+                    history.pushState(null, null, hash);
+                }
+            };
+
+            if (isDropdownItem) {
+                // For category items, delay slightly to ensure the DOM is updated
+                setTimeout(navigationAction, 100);
+            } else {
+                // For main menu toggles, navigate immediately
+                navigationAction();
             }
 
-            // Em mobile, fechar o dropdown após clicar em um item
+            // 3. Handle mobile dropdown visibility
             if (isMobileDevice() && isDropdownItem) {
                 const dropdown = anchor.closest('.dropdown');
                 if (dropdown) {

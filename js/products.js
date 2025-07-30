@@ -15,7 +15,8 @@ async function loadProducts() {
                 *,
                 categories (
                     id,
-                    name
+                    name,
+                    type
                 )
             `)
             .eq('is_active', true)
@@ -59,8 +60,8 @@ async function loadFloriculturaProducts(allProducts) {
     const floriculturaMenu = document.getElementById('floricultura-menu');
     floriculturaMenu.innerHTML = ''; // Clear existing items
 
-    // Filter products for floricultura (all products for now, until type field is added to database)
-    const floriculturaProducts = allProducts;
+    // Filter products for floricultura (anything not cafeteria)
+    const floriculturaProducts = allProducts.filter(p => !p.categories || p.categories.type !== 'cafeteria');
 
     // Add "Todos os Produtos" link
     /*
@@ -98,7 +99,7 @@ async function loadFloriculturaProducts(allProducts) {
     sortedCategories.forEach(categoryName => {
         if (productsByCategory[categoryName].length > 0) {
             console.log('Creating category section:', categoryName, 'with', productsByCategory[categoryName].length, 'products');
-            createCategorySection(categoryName, productsByCategory[categoryName], productsGrid);
+            createCategorySection(categoryName, productsByCategory[categoryName], productsGrid, 'floricultura');
 
             // Add category to dropdown menu
             const categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -113,7 +114,7 @@ async function loadFloriculturaProducts(allProducts) {
 
     // Add uncategorized products if any
     if (uncategorizedProducts.length > 0) {
-        createCategorySection('Produtos', uncategorizedProducts, productsGrid)
+        createCategorySection('Produtos', uncategorizedProducts, productsGrid, 'floricultura')
     }
 
     // Add quantity button listeners
@@ -141,8 +142,8 @@ async function loadCafeteriaProducts(allProducts) {
     const cafeteriaMenu = document.getElementById('cafeteria-menu');
     cafeteriaMenu.innerHTML = ''; // Clear existing items
 
-    // Filter products for cafeteria (empty for now, until type field is added to database)
-    const cafeteriaProducts = [];
+    // Filter products for cafeteria
+    const cafeteriaProducts = allProducts.filter(p => p.categories && p.categories.type === 'cafeteria');
 
     // Add "Todos os Produtos" link
     /*
@@ -176,7 +177,7 @@ async function loadCafeteriaProducts(allProducts) {
     // Create sections for each category
     sortedCategories.forEach(categoryName => {
         if (productsByCategory[categoryName].length > 0) {
-            createCategorySection(categoryName, productsByCategory[categoryName], cafeteriaGrid);
+            createCategorySection(categoryName, productsByCategory[categoryName], cafeteriaGrid, 'cafeteria');
 
             // Add category to dropdown menu
             const categoryId = 'cafeteria-category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -188,18 +189,18 @@ async function loadCafeteriaProducts(allProducts) {
         }
     })
 
-            // Add uncategorized products if any
-        if (uncategorizedProducts.length > 0) {
-            createCategorySection('Produtos', uncategorizedProducts, cafeteriaGrid)
-        } else {
-            // Show message if no cafeteria products
-            cafeteriaGrid.innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #666;">
-                    <h3>Nenhum produto de cafeteria disponível</h3>
-                    <p>Em breve teremos produtos de cafeteria!</p>
-                </div>
-            `
-        }
+    // Show message only if there are no categories with products
+    if (sortedCategories.length === 0 && uncategorizedProducts.length === 0) {
+        cafeteriaGrid.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <h3>Nenhum produto de cafeteria disponível</h3>
+                <p>Em breve teremos produtos de cafeteria!</p>
+            </div>
+        `
+    } else if (uncategorizedProducts.length > 0) {
+        // Add uncategorized products if any
+        createCategorySection('Produtos', uncategorizedProducts, cafeteriaGrid, 'cafeteria')
+    }
 
     // Add quantity button listeners for cafeteria
     document.querySelectorAll('#cafeteriaGrid .quantity-btn').forEach(button => {
@@ -217,14 +218,20 @@ async function loadCafeteriaProducts(allProducts) {
 }
 
 // Create category section
-function createCategorySection(categoryName, categoryProducts, container) {
+function createCategorySection(categoryName, categoryProducts, container, type = 'floricultura') {
     console.log('Creating category section for:', categoryName, 'with', categoryProducts.length, 'products');
     
     const categorySection = document.createElement('div');
     categorySection.className = 'category-section';
     categorySection.dataset.categoryName = categoryName;
 
-    const categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    let categoryId;
+    if (type === 'cafeteria') {
+        categoryId = 'cafeteria-category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    } else {
+        categoryId = 'category-' + categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    }
+
     // Create category title
     const categoryTitle = document.createElement('h3')
     categoryTitle.className = 'category-title'
@@ -332,7 +339,10 @@ function filterProductsByCategory(categoryNameToFilter) {
 
     const allCategories = document.querySelectorAll('#productsGrid .category-section');
     const productsTitle = document.getElementById('products-main-title');
-    if (productsTitle) productsTitle.style.display = 'block';
+    
+    // Hide main title when a category is selected
+    if (productsTitle) productsTitle.style.display = 'none';
+
     allCategories.forEach(categorySection => {
         if (categorySection.dataset.categoryName === categoryNameToFilter) {
             categorySection.style.display = 'block';
@@ -357,7 +367,10 @@ function filterCafeteriaByCategory(categoryNameToFilter) {
 
     const allCategories = document.querySelectorAll('#cafeteriaGrid .category-section');
     const cafeteriaTitle = document.getElementById('cafeteria-main-title');
-    if (cafeteriaTitle) cafeteriaTitle.style.display = 'block';
+
+    // Hide main title when a category is selected
+    if (cafeteriaTitle) cafeteriaTitle.style.display = 'none';
+    
     allCategories.forEach(categorySection => {
         if (categorySection.dataset.categoryName === categoryNameToFilter) {
             categorySection.style.display = 'block';

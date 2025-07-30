@@ -892,7 +892,6 @@
                     <div class="form-group">
                         <label for="categoryType">Tipo de Categoria</label>
                         <select id="categoryType" required>
-                            <option value="">Selecione o tipo</option>
                             <option value="floricultura">Floricultura</option>
                             <option value="cafeteria">Cafeteria</option>
                         </select>
@@ -1335,9 +1334,7 @@
         // Edit category
         async function editCategory(categoryId) {
             try {
-                openCategoryForm(categoryId)
-                
-                const { data: category, error } = await supabaseClient
+                const { data, error } = await supabaseClient
                     .from('categories')
                     .select('*')
                     .eq('id', categoryId)
@@ -1345,10 +1342,13 @@
 
                 if (error) throw error
 
-                document.getElementById('categoryId').value = category.id
-                document.getElementById('categoryName').value = category.name
-                document.getElementById('categoryDescription').value = category.description || ''
-                document.getElementById('categoryType').value = category.type || 'floricultura'
+                document.getElementById('categoryId').value = data.id
+                document.getElementById('categoryName').value = data.name
+                document.getElementById('categoryDescription').value = data.description
+                document.getElementById('categoryType').value = data.type || 'floricultura'
+
+                document.getElementById('categoryFormTitle').textContent = 'Editar Categoria'
+                document.getElementById('categoriesModal').style.display = 'block'
             } catch (error) {
                 console.error('Error loading category:', error)
                 alert('Erro ao carregar categoria')
@@ -1398,7 +1398,7 @@
                 const categoryData = {
                     name,
                     description: description || null,
-                    type: type || 'floricultura'
+                    type: type
                 }
 
                 if (categoryId) {
