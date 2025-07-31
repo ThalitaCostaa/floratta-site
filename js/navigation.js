@@ -16,55 +16,51 @@ function smoothScrollToAnchor(hash) {
 // Adicionar listener para links âncora dentro da página
 document.addEventListener('click', function(e) {
     const anchor = e.target.closest('a');
-    if (anchor && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
-        const isDropdownToggle = anchor.classList.contains('dropdown-toggle');
-        const isDropdownItem = anchor.classList.contains('dropdown-item');
+    if (!anchor || !anchor.getAttribute('href') || !anchor.getAttribute('href').startsWith('#')) {
+        return;
+    }
+
+    const href = anchor.getAttribute('href');
+    const onCafeteriaPage = window.location.pathname.includes('cafeteria.html');
+
+    // Handle clicks on main menu toggles (FLORES/CAFETERIA)
+    if (href === '#floricultura' || href === '#cafeteria') {
+        const isCafeteriaLink = href === '#cafeteria';
         
-        if (isDropdownToggle || isDropdownItem) {
+        // If on the correct page, just show all products and scroll
+        if ((!isCafeteriaLink && !onCafeteriaPage) || (isCafeteriaLink && onCafeteriaPage)) {
             e.preventDefault();
-            const hash = anchor.getAttribute('href');
-
-            // 1. Run the correct filter function based on the link clicked
-            if (isDropdownToggle) {
-                // Main menu links (FLORES or CAFETERIA)
-                if (hash === '#floricultura') {
-                    showAllProducts();
-                } else if (hash === '#cafeteria') {
-                    showAllCafeteriaProducts();
-                }
-            } else if (isDropdownItem) {
-                // Specific category links in the dropdown
-                const categoryName = anchor.textContent.trim();
-                if (hash.includes('cafeteria-category-')) {
-                    filterCafeteriaByCategory(categoryName);
-                } else {
-                    filterProductsByCategory(categoryName);
-                }
-            }
-
-            // 2. Perform navigation after the filter has been applied
-            const navigationAction = () => {
-                smoothScrollToAnchor(hash);
-                if (history.pushState) {
-                    history.pushState(null, null, hash);
-                }
-            };
-
-            if (isDropdownItem) {
-                // For category items, delay slightly to ensure the DOM is updated
-                setTimeout(navigationAction, 100);
+            if (isCafeteriaLink) {
+                showAllCafeteriaProducts();
             } else {
-                // For main menu toggles, navigate immediately
-                navigationAction();
+                showAllProducts();
             }
+            smoothScrollToAnchor(href);
+        }
+        // Otherwise, let the default behavior navigate to the correct page (e.g., index.html#floricultura)
+        return; 
+    }
 
-            // 3. Handle mobile dropdown visibility
-            if (isMobileDevice() && isDropdownItem) {
-                const dropdown = anchor.closest('.dropdown');
-                if (dropdown) {
-                    dropdown.classList.remove('active');
-                }
+    // Handle clicks on category dropdown items
+    if (href.startsWith('#category-') || href.startsWith('#cafeteria-category-')) {
+        e.preventDefault();
+        const isCafeteriaCategory = href.startsWith('#cafeteria-category-');
+
+        if (isCafeteriaCategory && !onCafeteriaPage) {
+            // From index to cafeteria page with category filter
+            window.location.href = 'cafeteria.html' + href;
+        } else if (!isCafeteriaCategory && onCafeteriaPage) {
+            // From cafeteria to index page with category filter
+            window.location.href = 'index.html' + href;
+        } else {
+            // Filter on the same page
+            const categoryName = anchor.textContent.trim();
+            if (isCafeteriaCategory) {
+                filterCafeteriaByCategory(categoryName);
+            } else {
+                filterProductsByCategory(categoryName);
             }
+            smoothScrollToAnchor(href);
         }
     }
 });

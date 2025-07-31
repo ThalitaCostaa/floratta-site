@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floratta Flowers</title>
+    <title>Floratta Flowers - Cafeteria</title>
     <link rel="icon" type="image/png" href="icontransp.png">
     
     <!-- Ícones e Fontes -->
@@ -25,7 +25,7 @@
             <div class="logo"><a href="index.html"><img src="logo.png" alt="Floratta Flowers" class="logo-img"></a></div>
             <nav>
                 <div class="dropdown">
-                    <a href="#floricultura" class="dropdown-toggle nav-link">
+                    <a href="index.html#floricultura" class="dropdown-toggle nav-link">
                         FLORES <i class="fas fa-chevron-down"></i>
                     </a>
                     <div class="dropdown-menu" id="floricultura-menu">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="cafeteria.html" class="dropdown-toggle nav-link">
+                    <a href="#cafeteria" class="dropdown-toggle nav-link">
                         CAFETERIA <i class="fas fa-chevron-down"></i>
                     </a>
                     <div class="dropdown-menu" id="cafeteria-menu">
@@ -47,47 +47,12 @@
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-carousel">
-            <div class="carousel-slide active"></div>
-            <div class="carousel-slide"></div>
-            <div class="carousel-slide"></div>
-        </div>
-        <button class="carousel-nav prev" onclick="prevSlide()">❮</button>
-        <button class="carousel-nav next" onclick="nextSlide()">❯</button>
-        <div class="carousel-indicators">
-            <div class="indicator active" onclick="goToSlide(0)"></div>
-            <div class="indicator" onclick="goToSlide(1)"></div>
-            <div class="indicator" onclick="goToSlide(2)"></div>
+    <section class="products" id="cafeteria">
+        <h2 id="cafeteria-main-title">CAFETERIA</h2>
+        <div class="products-grid" id="cafeteriaGrid">
+            <!-- Cafeteria products will be loaded here -->
         </div>
     </section>
-
-    <section class="features">
-        <div class="feature-card">
-            <i class="fas fa-truck"></i>
-            <h3>Entrega Rápida</h3>
-            <p>Entregamos em toda a região, consulte nossas taxas.</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-clock"></i>
-            <h3>Horário de Atendimento</h3>
-            <p>13h30 às 18h00</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-spa"></i>
-            <h3>Produtos Frescos</h3>
-            <p>Qualidade em cada detalhe. Produtos selecionados com carinho.</p>
-        </div>
-    </section>
-
-    <section class="products" id="floricultura">
-        <h2 id="products-main-title">NOSSOS PRODUTOS</h2>
-        <div class="products-grid" id="productsGrid">
-            <!-- Products will be loaded here -->
-        </div>
-    </section>
-
-
 
     <div class="cart" onclick="showDeliveryModal()">
         <i class="fas fa-shopping-cart"></i>
@@ -243,11 +208,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', carregarFraseMascote);
-    </script>
-    <script>
+
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
         });
+
     </script>
 </body>
 </html> 
