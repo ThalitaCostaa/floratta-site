@@ -21,42 +21,49 @@ document.addEventListener('click', function(e) {
     }
 
     const href = anchor.getAttribute('href');
+    const onFloriculturaPage = window.location.pathname.includes('floricultura.html');
     const onCafeteriaPage = window.location.pathname.includes('cafeteria.html');
+    const onHomeDecorPage = window.location.pathname.includes('home-decor.html');
 
-    // Handle clicks on main menu toggles (FLORES/CAFETERIA)
-    if (href === '#floricultura' || href === '#cafeteria') {
-        const isCafeteriaLink = href === '#cafeteria';
-        
-        // If on the correct page, just show all products and scroll
-        if ((!isCafeteriaLink && !onCafeteriaPage) || (isCafeteriaLink && onCafeteriaPage)) {
-            e.preventDefault();
-            if (isCafeteriaLink) {
-                showAllCafeteriaProducts();
-            } else {
-                showAllProducts();
-            }
-            smoothScrollToAnchor(href);
-        }
-        // Otherwise, let the default behavior navigate to the correct page (e.g., index.html#floricultura)
+    // Handle clicks on main menu toggles (FLORES/CAFETERIA/HOME DECOR)
+    if (href === '#floricultura' || href === '#cafeteria' || href === '#home-decor') {
+        // Don't show products when clicking main menu items
+        // Just allow normal navigation to the correct page
         return; 
     }
 
     // Handle clicks on category dropdown items
-    if (href.startsWith('#category-') || href.startsWith('#cafeteria-category-')) {
+    if (href.startsWith('#category-') || href.startsWith('#cafeteria-category-') || href.startsWith('#home-decor-category-')) {
         e.preventDefault();
+        const isFloriculturaCategory = href.startsWith('#category-');
         const isCafeteriaCategory = href.startsWith('#cafeteria-category-');
+        const isHomeDecorCategory = href.startsWith('#home-decor-category-');
 
-        if (isCafeteriaCategory && !onCafeteriaPage) {
-            // From index to cafeteria page with category filter
+        if (isFloriculturaCategory && !onFloriculturaPage) {
+            // From other page to floricultura page with category filter
+            window.location.href = 'floricultura.html' + href;
+        } else if (isCafeteriaCategory && !onCafeteriaPage) {
+            // From other page to cafeteria page with category filter
             window.location.href = 'cafeteria.html' + href;
-        } else if (!isCafeteriaCategory && onCafeteriaPage) {
-            // From cafeteria to index page with category filter
-            window.location.href = 'index.html' + href;
+        } else if (isHomeDecorCategory && !onHomeDecorPage) {
+            // From other page to home decor page with category filter
+            window.location.href = 'home-decor.html' + href;
+        } else if (isFloriculturaCategory && (onCafeteriaPage || onHomeDecorPage)) {
+            // From cafeteria/home-decor to floricultura page with category filter
+            window.location.href = 'floricultura.html' + href;
+        } else if (isCafeteriaCategory && (onFloriculturaPage || onHomeDecorPage)) {
+            // From floricultura/home-decor to cafeteria page with category filter
+            window.location.href = 'cafeteria.html' + href;
+        } else if (isHomeDecorCategory && (onFloriculturaPage || onCafeteriaPage)) {
+            // From floricultura/cafeteria to home-decor page with category filter
+            window.location.href = 'home-decor.html' + href;
         } else {
             // Filter on the same page
             const categoryName = anchor.textContent.trim();
             if (isCafeteriaCategory) {
                 filterCafeteriaByCategory(categoryName);
+            } else if (isHomeDecorCategory) {
+                filterHomeDecorByCategory(categoryName);
             } else {
                 filterProductsByCategory(categoryName);
             }
@@ -75,28 +82,29 @@ window.addEventListener('hashchange', function() {
     }
 });
 
-// Dropdown toggle para mobile
-if (isMobileDevice()) {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(dropdown => {
-        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+// Dropdown toggle para mobile (desabilitado - usar mobile-menu.js em vez disso)
+// O menu mobile é gerenciado pelo mobile-menu.js para melhor UX
+// if (isMobileDevice()) {
+//     const dropdowns = document.querySelectorAll('.dropdown');
+//     
+//     dropdowns.forEach(dropdown => {
+//         const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
 
-        dropdownToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdown.classList.toggle('active');
-        });
-    });
+//         dropdownToggle.addEventListener('click', function(e) {
+//             e.preventDefault();
+//             dropdown.classList.toggle('active');
+//         });
+//     });
 
-    // Fechar se clicar fora
-    document.addEventListener('click', function(e) {
-        dropdowns.forEach(dropdown => {
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
-    });
-}
+//     // Fechar se clicar fora
+//     document.addEventListener('click', function(e) {
+//         dropdowns.forEach(dropdown => {
+//             if (!dropdown.contains(e.target)) {
+//                 dropdown.classList.remove('active');
+//             }
+//         });
+//     });
+// }
 
 // Desktop dropdown hover
 if (!isMobileDevice()) {

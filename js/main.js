@@ -3,6 +3,8 @@ const supabaseUrl = 'https://ggpdipsjxkbusemsdyfu.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdncGRpcHNqeGtidXNlbXNkeWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNDY1ODksImV4cCI6MjA2MzYyMjU4OX0.Al33UO6GmDQqxddsUo-IBS6KUswpCph535FEgtqBRF0'
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
 
+
+
 // CONFIGURAÇÃO DE FRETE - EDITE AQUI OS BAIRROS E VALORES
 const freteOptions = {
     'centro': { name: 'Centro', value: 10.00 },
@@ -44,4 +46,4 @@ function loadCartFromSession() {
 document.addEventListener('DOMContentLoaded', () => {
     loadCartFromSession();
     updateCartCount();
-}); 
+});

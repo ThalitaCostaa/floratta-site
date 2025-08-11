@@ -894,6 +894,7 @@
                         <select id="categoryType" required>
                             <option value="floricultura">Floricultura</option>
                             <option value="cafeteria">Cafeteria</option>
+                            <option value="home-decor">Home Decor</option>
                         </select>
                     </div>
                     <div class="modal-buttons">
@@ -961,6 +962,8 @@
         const supabaseUrl = 'https://ggpdipsjxkbusemsdyfu.supabase.co'
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdncGRpcHNqeGtidXNlbXNkeWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNDY1ODksImV4cCI6MjA2MzYyMjU4OX0.Al33UO6GmDQqxddsUo-IBS6KUswpCph535FEgtqBRF0'
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
+
+
 
         // Check authentication state
         async function checkAuth() {
@@ -1193,9 +1196,9 @@
         }
 
         // Categories modal handlers
-        function openCategoriesModal() {
+        async function openCategoriesModal() {
             const modal = document.getElementById('categoriesModal')
-            loadCategories()
+            await loadCategories()
             modal.style.display = 'flex'
         }
 
@@ -1252,7 +1255,9 @@
                 categories.forEach(category => {
                     const categoryItem = document.createElement('div')
                     categoryItem.className = 'category-item'
-                    const typeLabel = category.type === 'cafeteria' ? 'Cafeteria' : 'Floricultura';
+                    let typeLabel = 'Floricultura';
+                    if (category.type === 'cafeteria') typeLabel = 'Cafeteria';
+                    else if (category.type === 'home-decor') typeLabel = 'Home Decor';
                     categoryItem.innerHTML = `
                         <div class="category-info">
                             <h4>${category.name}</h4>

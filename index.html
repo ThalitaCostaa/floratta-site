@@ -23,9 +23,18 @@
     <header>
         <div class="header-content">
             <div class="logo"><a href="index.html"><img src="logo.png" alt="Floratta Flowers" class="logo-img"></a></div>
-            <nav>
+            
+            <!-- Botão Hambúrguer para Mobile -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <!-- Navegação Desktop -->
+            <nav class="desktop-nav">
                 <div class="dropdown">
-                    <a href="#floricultura" class="dropdown-toggle nav-link">
+                    <a href="floricultura.html#floricultura" class="dropdown-toggle nav-link">
                         FLORES <i class="fas fa-chevron-down"></i>
                     </a>
                     <div class="dropdown-menu" id="floricultura-menu">
@@ -40,11 +49,67 @@
                         <!-- Categorias de cafeteria carregadas aqui -->
                     </div>
                 </div>
+                <div class="dropdown">
+                    <a href="home-decor.html" class="dropdown-toggle nav-link">
+                        HOME DECOR <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu" id="home-decor-menu">
+                        <!-- Categorias de home decor carregadas aqui -->
+                    </div>
+                </div>
                 <a href="sobre.html" class="nav-link">SOBRE NÓS</a>
                 <a href="contato.html" class="nav-link">CONTATO</a>
             </nav>
+            
             <a href="admin.html" class="admin-link" aria-label="Admin Login"><i class="fas fa-spa"></i></a>
         </div>
+        
+        <!-- Menu Lateral Mobile -->
+        <div class="mobile-sidebar" id="mobileSidebar">
+            <div class="mobile-sidebar-header">
+                <img src="logo.png" alt="Floratta Flowers" class="mobile-logo">
+            </div>
+            <nav class="mobile-sidebar-nav">
+                <div class="mobile-dropdown">
+                    <a href="floricultura.html#floricultura" class="mobile-dropdown-toggle">
+                        <span>FLORES</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <div class="mobile-dropdown-menu" id="mobile-floricultura-menu">
+                        <!-- Categorias de floricultura carregadas aqui -->
+                    </div>
+                </div>
+                <div class="mobile-dropdown">
+                    <a href="cafeteria.html" class="mobile-dropdown-toggle">
+                        <span>CAFETERIA</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <div class="mobile-dropdown-menu" id="mobile-cafeteria-menu">
+                        <!-- Categorias de cafeteria carregadas aqui -->
+                    </div>
+                </div>
+                <div class="mobile-dropdown">
+                    <a href="home-decor.html" class="mobile-dropdown-toggle">
+                        <span>HOME DECOR</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <div class="mobile-dropdown-menu" id="mobile-home-decor-menu">
+                        <!-- Categorias de home decor carregadas aqui -->
+                    </div>
+                </div>
+                <a href="sobre.html" class="mobile-nav-link">
+                    <span>SOBRE NÓS</span>
+                    <i class="fas fa-heart"></i>
+                </a>
+                <a href="contato.html" class="mobile-nav-link">
+                    <span>CONTATO</span>
+                    <i class="fas fa-phone"></i>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Overlay para Mobile -->
+        <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
     </header>
 
     <section class="hero">
@@ -80,12 +145,7 @@
         </div>
     </section>
 
-    <section class="products" id="floricultura">
-        <h2 id="products-main-title">NOSSOS PRODUTOS</h2>
-        <div class="products-grid" id="productsGrid">
-            <!-- Products will be loaded here -->
-        </div>
-    </section>
+
 
 
 
@@ -180,6 +240,15 @@
         <div id="caption"></div>
     </div>
 
+    <!-- Description Modal -->
+    <div id="descriptionModal" class="description-modal">
+        <div class="description-modal-content">
+            <span class="close-description-modal">&times;</span>
+            <h3 id="descriptionModalTitle"></h3>
+            <p id="descriptionModalText"></p>
+        </div>
+    </div>
+
     <!-- Footer do Desenvolvedor -->
     <footer class="developer-footer">
         <p>Desenvolvido por <strong>CostaBecker Soluções em Tecnologia LTDA</strong> | 
@@ -207,6 +276,7 @@
     <script src="js/modals.js"></script>
     <script src="js/products.js"></script>
     <script src="js/carousel.js"></script>
+    <script src="js/mobile-menu.js"></script>
 
     <script>
         // A configuração do Supabase foi movida para js/main.js para evitar duplicidade
