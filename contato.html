@@ -267,16 +267,17 @@
 
         @media (max-width: 768px) {
             header {
-                height: auto;
-                min-height: 80px;
-                padding: 0.5rem 0;
+                height: 60px;
+                min-height: 60px;
+                padding: 0.25rem 0;
             }
             
             .header-content {
                 padding: 0.5rem 1rem;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: center;
+                height: 100%;
             }
 
             .logo {
@@ -287,25 +288,27 @@
             }
 
             .logo-img {
-                height: 35px;
+                height: 30px;
             }
 
             nav {
-                width: 100%;
+                display: flex;
                 justify-content: center;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                order: 3;
-                flex-basis: 100%;
-                margin-top: 0.5rem;
+                align-items: center;
+                flex-wrap: nowrap;
+                gap: 0.3rem;
+                order: 2;
+                flex: 1;
+                margin: 0;
             }
 
             nav a {
-                font-size: 0.85rem;
-                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+                padding: 0.2rem 0.3rem;
                 transition: all 0.3s ease;
                 border-radius: 4px;
                 position: relative;
+                white-space: nowrap;
             }
 
             nav a:hover,
@@ -347,8 +350,11 @@
             }
 
             .header-icons {
-                order: 2;
-                margin-right: 0.5rem;
+                order: 3;
+                margin-right: 0;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
             }
 
             .admin-link {
@@ -356,8 +362,8 @@
             }
 
             main {
-                min-height: calc(100vh - 80px);
-                margin-top: 80px;
+                min-height: calc(100vh - 60px);
+                margin-top: 60px;
                 padding: 1rem;
                 align-items: center;
                 justify-content: center;
@@ -372,7 +378,7 @@
             }
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
                 margin-bottom: 1.2rem;
                 text-align: center;
             }
@@ -433,11 +439,12 @@
             }
 
             nav a {
-                font-size: 0.75rem;
-                padding: 0.2rem 0.4rem;
+                font-size: 0.65rem;
+                padding: 0.15rem 0.25rem;
                 transition: all 0.3s ease;
                 border-radius: 4px;
                 position: relative;
+                white-space: nowrap;
             }
 
             nav a:hover,
@@ -483,8 +490,8 @@
             }
             
             main {
-                min-height: calc(100vh - 80px);
-                margin-top: 80px;
+                min-height: calc(100vh - 60px);
+                margin-top: 60px;
                 padding: 0.5rem;
                 align-items: center;
                 justify-content: center;
@@ -499,7 +506,7 @@
             }
 
             h1 {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
                 margin-bottom: 1rem;
                 text-align: center;
             }
