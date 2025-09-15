@@ -419,4 +419,54 @@
     color: #bbb;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Estilos para a seção de retirada no local */
+#pickupInfo {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.pickup-address {
+    text-align: left;
+}
+
+.pickup-address h3 {
+    color: var(--primary);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.pickup-address p {
+    margin: 0.5rem 0;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.pickup-address p strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Estilos para campos condicionais */
+#deliveryFields {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+/* Animação suave para mostrar/ocultar campos */
+#deliveryFields,
+#pickupInfo {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Destaque para a opção de retirada */
+#deliveryType option[value="pickup"] {
+    background: #e8f5e8;
 } 

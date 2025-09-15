@@ -67,6 +67,53 @@ function updateCartSummary(subtotal) {
     document.getElementById('modalCartTotal').textContent = `R$ ${(subtotal + freteValue).toFixed(2)}`;
 }
 
+function toggleDeliveryFields() {
+    const deliveryType = document.getElementById('deliveryType').value;
+    const deliveryFields = document.getElementById('deliveryFields');
+    const pickupInfo = document.getElementById('pickupInfo');
+    const streetField = document.getElementById('street');
+    const numberField = document.getElementById('number');
+    const neighborhoodField = document.getElementById('neighborhood');
+    const deliveryAreaField = document.getElementById('deliveryArea');
+    
+    if (deliveryType === 'delivery') {
+        deliveryFields.style.display = 'block';
+        pickupInfo.style.display = 'none';
+        
+        // Tornar os campos obrigatórios para entrega
+        streetField.required = true;
+        numberField.required = true;
+        neighborhoodField.required = true;
+        deliveryAreaField.required = true;
+        
+        // Resetar frete quando mudar para entrega
+        freteValue = 0;
+        updateCartSummary(cartTotal);
+        loadFreteOptions();
+        
+    } else if (deliveryType === 'pickup') {
+        deliveryFields.style.display = 'none';
+        pickupInfo.style.display = 'block';
+        
+        // Remover obrigatoriedade dos campos para retirada
+        streetField.required = false;
+        numberField.required = false;
+        neighborhoodField.required = false;
+        deliveryAreaField.required = false;
+        
+        // Zerar frete para retirada no local
+        freteValue = 0;
+        document.getElementById('deliveryArea').value = '';
+        updateCartSummary(cartTotal);
+        
+    } else {
+        deliveryFields.style.display = 'none';
+        pickupInfo.style.display = 'none';
+        freteValue = 0;
+        updateCartSummary(cartTotal);
+    }
+}
+
 function removeCartItem(index) {
     cartTotal -= cart[index].price;
     cart.splice(index, 1);
@@ -90,6 +137,9 @@ function closeDeliveryModal() {
     document.getElementById('deliveryModal').style.display = 'none';
     freteValue = 0;
     document.getElementById('deliveryArea').value = '';
+    document.getElementById('deliveryType').value = '';
+    document.getElementById('deliveryFields').style.display = 'none';
+    document.getElementById('pickupInfo').style.display = 'none';
     updateCartSummary(cartTotal);
 }
 
@@ -124,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
+            const deliveryType = document.getElementById('deliveryType').value;
             const street = document.getElementById('street').value;
             const number = document.getElementById('number').value;
             const neighborhood = document.getElementById('neighborhood').value;
@@ -133,8 +184,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const troco = document.getElementById('troco').value;
             const giftMessage = document.getElementById('giftMessage').value; // Pega a mensagem do presente
 
-            // Verificar se o frete foi selecionado
-            if (!deliveryArea) {
+            // Verificar se o tipo de recebimento foi selecionado
+            if (!deliveryType) {
+                alert('Por favor, selecione como você gostaria de receber o pedido.');
+                return;
+            }
+
+            // Verificar se o frete foi selecionado (apenas para entrega)
+            if (deliveryType === 'delivery' && !deliveryArea) {
                 alert('Por favor, selecione a área de entrega para calcular o frete.');
                 return;
             }
@@ -158,8 +215,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             message += `*Resumo dos Valores:*\n`;
             message += `Produtos: R$ ${cartTotal.toFixed(2)}\n`;
-            message += `Frete (${freteOptions[deliveryArea].name}): R$ ${freteValue.toFixed(2)}\n`;
-            message += `*Total: R$ ${(cartTotal + freteValue).toFixed(2)}*\n\n`;
+            
+            if (deliveryType === 'delivery') {
+                message += `Frete (${freteOptions[deliveryArea].name}): R$ ${freteValue.toFixed(2)}\n`;
+                message += `*Total: R$ ${(cartTotal + freteValue).toFixed(2)}*\n\n`;
+            } else {
+                message += `Frete: R$ 0,00 (Retirada no local)\n`;
+                message += `*Total: R$ ${cartTotal.toFixed(2)}*\n\n`;
+            }
             
             message += `*Forma de Pagamento:* ${getPaymentMethodName(payment)}\n`;
             if(payment === 'dinheiro' && troco) {
@@ -167,10 +230,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             message += `\n`;
             
-            message += `*Endereço para Entrega:*\n`;
-            message += `${street}, ${number} – ${neighborhood}`;
-            if(complement) message += `, ${complement}`;
-            message += `\n\n`;
+            if (deliveryType === 'delivery') {
+                message += `*Endereço para Entrega:*\n`;
+                message += `${street}, ${number} – ${neighborhood}`;
+                if(complement) message += `, ${complement}`;
+                message += `\n\n`;
+            } else {
+                message += `*Forma de Recebimento:* Retirada na loja\n`;
+                message += `*Endereço da loja:* Av. Celso Ramos n° 333 - Centro - Garuva/SC\n`;
+                message += `*Horário de funcionamento:*\n`;
+                message += `Segunda a Domingo: 13h30 às 18h00\n`;
+            }
             
             // Adiciona a mensagem de presente se houver uma
             if (giftMessage) {
