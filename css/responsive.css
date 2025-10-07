@@ -72,11 +72,13 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 .mobile-sidebar-overlay.active {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
 
 .mobile-sidebar-header {
@@ -102,7 +104,14 @@
 .mobile-dropdown,
 .mobile-nav-link {
     width: 100%;
-    border-bottom: 1px solid rgba(184, 134, 11, 0.08);
+}
+
+/* Separadores consistentes entre itens do menu */
+.mobile-sidebar-nav > .mobile-dropdown,
+.mobile-sidebar-nav > .mobile-nav-link {
+    border-top: 1px solid rgba(184, 134, 11, 0.08);
+    border-bottom: none;
+    margin: 0;
 }
 
 .mobile-dropdown-toggle,
@@ -110,11 +119,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.9rem 1.2rem;
+    padding: 0.75rem 1rem;
     color: var(--primary);
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     background: none;
@@ -122,6 +131,7 @@
     text-align: left;
     cursor: pointer;
     box-sizing: border-box;
+    border-bottom: none;
 }
 
 .mobile-dropdown-toggle:hover,
@@ -146,7 +156,7 @@
 .mobile-dropdown-toggle i,
 .mobile-nav-link i {
     transition: transform 0.2s ease;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     opacity: 0.6;
     margin-left: 0.5rem;
 }
@@ -162,18 +172,30 @@
     transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     box-sizing: border-box;
+    display: none;
+}
+
+/* Evita espaço extra quando o submenu está vazio (ex.: FLORES sem categorias nesta página) */
+.mobile-dropdown-menu:empty {
+    display: none;
+}
+.mobile-dropdown.active .mobile-dropdown-menu:empty {
+    max-height: 0;
 }
 
 .mobile-dropdown.active .mobile-dropdown-menu {
-    max-height: 300px;
+    max-height: 65vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
 }
 
 .mobile-dropdown-menu a {
     display: block;
-    padding: 0.7rem 2rem;
+    padding: 0.6rem 1.5rem;
     color: var(--secondary);
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     transition: all 0.2s ease;
     border-left: 2px solid transparent;
     width: 100%;
@@ -659,7 +681,7 @@
     
     .mobile-dropdown-toggle,
     .mobile-nav-link {
-        padding: 0.8rem 1rem;
+        padding: 0.75rem 1rem;
         font-size: 0.85rem;
     }
     

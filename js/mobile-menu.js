@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileSidebarOverlay = document.getElementById('mobileSidebarOverlay');
     const mobileDropdowns = document.querySelectorAll('.mobile-dropdown');
 
+    // Garantir que a rolagem da página esteja liberada ao carregar
+    document.body.style.overflow = '';
+
     // Função para abrir o menu
     function openMobileMenu() {
         mobileMenuToggle.classList.add('active');
@@ -110,6 +113,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape' && mobileSidebar.classList.contains('active')) {
             closeMobileMenu();
         }
+    });
+
+    // Salvaguardas adicionais para nunca manter a página travada
+    window.addEventListener('pageshow', function() {
+        // Em alguns navegadores (ex.: iOS), o estilo pode persistir ao voltar
+        if (!mobileSidebar.classList.contains('active')) {
+            document.body.style.overflow = '';
+        }
+    });
+    window.addEventListener('beforeunload', function() {
+        document.body.style.overflow = '';
     });
 
     // Carregar categorias nos dropdowns mobile
